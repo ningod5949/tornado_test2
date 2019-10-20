@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+        base
+        {% end %}
+    </title>
+    <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+{% block body %}
+this is body.
+{% end %}
+</body>
+</html>
