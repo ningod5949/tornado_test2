@@ -7,5 +7,7 @@
 
 
 {% block body %}
-    index
+    {% for  p in posts %}
+        <img src="{{ static_url(p.image_url) }}" alt=""> <br>
+    {% end %}
 {% end %}

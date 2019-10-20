@@ -34,7 +34,7 @@ class LoginHandler(BaseHandler):
             self.redirect('/login?msg=empty password or username')
         else:
             if authenticate(username, password):
-                self.session.get('tudo_user', username)
+                self.session.set('tudo_user', username)     # 设置session
                 if next_url:
                     self.redirect(next_url)
                 else:
