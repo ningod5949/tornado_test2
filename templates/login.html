@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    login page
+{% end %}
+
+{% block body %}
+    {% if msg %}
+        error: {{ msg }}
+    {% end %}
+    <form action="/login" enctype="multipart/form-data" method="post">
+        username: <input type="text" name="username"> <br>
+        password: <input type="password" name="password"> <br>
+
+        <input type="submit">
+    </form>
+{% end %}

@@ -1,9 +1,12 @@
 from datetime import datetime
 from sqlalchemy import (Column, Integer, String, DateTime, ForeignKey)
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import exists       # 查询存在
 
 from models.db import Base, Session
 
+
+session = Session()
 
 # 创建用户表模型
 class User(Base):
@@ -17,6 +20,18 @@ class User(Base):
 
     def __repr__(self):
         return "<User:#{}-{}>".format(self.id, self.name)       # 格式化返回
+
+    @classmethod
+    def is_exists(cls, username):
+        return session.query(exists().where(cls.name == username)).scalar()     # scalar返回查询对象的值
+
+    @classmethod
+    def get_password(cls, username):
+        user = session.query(cls).filter_by(name=username).first()
+        if user:
+            return user.password
+        else:
+            return ''
 
 # 1个user对应多个post表
 class Post(Base):
@@ -33,11 +48,7 @@ class Post(Base):
         return "<User:#{}>".format(self.id)       # 格式化返回
 
 
-# 用户注册数据交互操作
-def register(username, password):
-    s = Session()
-    s.add(User(name=username, password=password))
-    s.commit()
+
 
 if __name__ == '__main__':
     Base.metadata.create_all()      # 创建表

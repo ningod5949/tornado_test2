@@ -16,6 +16,7 @@ class Application(tornado.web.Application):
             (r'/explore', main.ExploreHandler),
             (r'/post/(?P<post_id>[0-9]+)', main.PostHandler),
             (r'/signup', account.RegisterHandler),
+            (r'/login', account.LoginHandler),
         ]
 
         settings = dict(
@@ -30,7 +31,7 @@ class Application(tornado.web.Application):
                 'storage': {
                     'host': 'localhost',
                     'port': '6379',
-                    'db_connection': 5,
+                    'db_sessions': 5,
                     'max_connections': 2 ** 30,
                 },
                 'cookies': {
