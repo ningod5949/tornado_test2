@@ -25,10 +25,11 @@ class ExploreHandler(tornado.web.RequestHandler):
     最近上传缩略图的页面
     """
     def get(self):
-        self.render('explore.html')
+        posts = get_all_posts()
+        self.render('explore.html', posts=posts)
 
 
-class PostHandler(tornado.web.RequestHandler):
+class PostHandler(BaseHandler):
     """
     单个图片详情页面
     """
@@ -53,6 +54,8 @@ class UploadHandler(BaseHandler):
             up_img = UploadImage(p['filename'], self.settings['static_path'])
             up_img.save_upload(p['body'])
             up_img.make_thumb()
-            post_id = add_post(up_img.image_url, self.current_user)
+            post_id = add_post(up_img.image_url,
+                               up_img.thumb_url,
+                               self.current_user)
 
         self.redirect('/post/{}'.format(post_id))

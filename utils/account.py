@@ -34,7 +34,7 @@ def register(username, password):
     s.close()
 
 
-def add_post(image_url, username):
+def add_post(image_url, thumb_url, username):
     """
     上传图片保存到数据库
     :param image_url:
@@ -43,7 +43,7 @@ def add_post(image_url, username):
     """
     session = Session()
     user = session.query(User).filter_by(name=username).first()
-    post = Post(image_url=image_url, user=user)
+    post = Post(image_url=image_url, thumb_url=thumb_url, user=user)
     session.add(post)
     session.commit()
     post_id = post.id
