@@ -3,7 +3,7 @@ import tornado.web
 import tornado.options
 from tornado.options import define, options
 
-from handlers import main
+from handlers import main, account
 
 define('port', default='8000', help='Listening port', type=int)
 define('debug', default='True', help='Debug mode', type=bool)
@@ -15,6 +15,7 @@ class Application(tornado.web.Application):
             (r'/', main.IndexHandler),
             (r'/explore', main.ExploreHandler),
             (r'/post/(?P<post_id>[0-9]+)', main.PostHandler),
+            (r'/signup', account.RegisterHandler),
         ]
 
         settings = dict(

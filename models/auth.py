@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy import (Column, Integer, String, DateTime, ForeignKey)
 from sqlalchemy.orm import relationship
 
-from models.db import Base
+from models.db import Base, Session
 
 
 # 创建用户表模型
@@ -32,6 +32,12 @@ class Post(Base):
     def __repr__(self):
         return "<User:#{}>".format(self.id)       # 格式化返回
 
+
+# 用户注册数据交互操作
+def register(username, password):
+    s = Session()
+    s.add(User(name=username, password=password))
+    s.commit()
 
 if __name__ == '__main__':
     Base.metadata.create_all()      # 创建表
