@@ -9,9 +9,23 @@
         error: {{ msg }}
     {% end %}
     <form action="/login" enctype="multipart/form-data" method="post">
-        username: <input type="text" name="username"> <br>
-        password: <input type="password" name="password"> <br>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">@</span>
+            </div>
+            <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                   aria-describedby="basic-addon1" name="username">
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">@</span>
+            </div>
+            <input type="password" class="form-control" placeholder="Username" aria-label="Username"
+                   aria-describedby="basic-addon1" name="password">
+        </div>
+
         <input type="text" name="next" hidden="" value="{{ next_url }}"> <br>
-        <input type="submit">
+        <input type="submit" class="btn btn-primary">
     </form>
 {% end %}

@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, inital-scale=1.0">
     <title>
         {% block title %}
         base
         {% end %}
     </title>
     <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ static_url('css/bootstrap.min.css') }}">
     <style>
         * {
             margin: 0;
@@ -16,13 +18,53 @@
     </style>
 </head>
 <body>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">图片库</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">首页 <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/explore">发现页面</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          用户中心
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">收藏</a>
+          <a class="dropdown-item" href="/upload">上传</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/login">登录</a>
+        </div>
+      </li>
+        {% if current_user %}
+      <li class="nav-item">
+        <a class="nav-link disabled" href="/logout">登出</a>
+      </li>
+        {% end %}
+    </ul>
+      <a href="/upload" class="btn btn-outline-success my-2 my-sm-0" >上传图片</a>
+  </div>
+</nav>
 {% if current_user %}
         <h2>当前用户为：{{ current_user }}</h2>
         <hr>
 {% end %}
 
+
 {% block body %}
         this is body.
 {% end %}
+</div>
+<script src="{{ static_url('js/jquery-3.3.1.slim.min.js') }}"></script>
+<script src="{{ static_url('js/popper.min.js') }}"></script>
+<script src="{{ static_url('js/bootstrap.min.js') }}"></script>
 </body>
 </html>

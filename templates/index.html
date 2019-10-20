@@ -5,11 +5,36 @@
     index page
 {% end %}
 
-
 {% block body %}
-    {% for  p in posts %}
-        <a href="{{ '/post/{}'.format(p.id) }}">
-            <img src="{{ static_url(p.image_url) }}" alt=""> <br>
-        </a>
-    {% end %}
+    <div class="alert alert-success" role="alert">
+        ningod <br>
+        A simple primary alert—check it out!
+    </div>
+
+        <div class="row">
+            <div class="col-md-8" >
+                {% for  p in posts %}
+                    <div class="card">
+                        <a href="{{ '/post/{}'.format(p.id) }}">
+                            <img class="card-img-top" src="{{ static_url(p.image_url) }}" alt="Card image cap">
+                        </a>
+                        <div class="card-body">
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                                the card's content.</p>
+                        </div>
+                    </div>
+                {% end %}
+            </div>
+            <div class="col-md-4" >
+
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="http://code.z01.com/v4/assets/img/bootstrap-stack.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">ningod</h5>
+                        <p class="card-text">my name is xuning</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% end %}
