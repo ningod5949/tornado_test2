@@ -22,6 +22,21 @@ class Application(tornado.web.Application):
             debug=True,
             template_path='templates',
             static_path='static',
+            cookie_secret='fkjdshfkjsadfhdkjsaf',
+            login_url='/login',
+            # xsrf_cookies=True
+            pycket={
+                'engine': 'redis',
+                'storage': {
+                    'host': 'localhost',
+                    'port': '6379',
+                    'db_connection': 5,
+                    'max_connections': 2 ** 30,
+                },
+                'cookies': {
+                    'expires_days': 30,
+                },
+            }
         )
         super().__init__(handlers, **settings)
 

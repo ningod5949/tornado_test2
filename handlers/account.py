@@ -16,3 +16,7 @@ class RegisterHandler(tornado.web.RequestHandler):
             self.write('sign up ok!')
         else:
             self.write('bad username/password')
+
+
+class LoginHandler(tornado.web.RequestHandler):
+    pass
