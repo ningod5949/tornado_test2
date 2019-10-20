@@ -8,6 +8,8 @@
 
 {% block body %}
     {% for  p in posts %}
-        <img src="{{ static_url(p.image_url) }}" alt=""> <br>
+        <a href="{{ '/post/{}'.format(p.id) }}">
+            <img src="{{ static_url(p.image_url) }}" alt=""> <br>
+        </a>
     {% end %}
 {% end %}

@@ -16,8 +16,13 @@
     </style>
 </head>
 <body>
+{% if current_user %}
+        <h2>当前用户为：{{ current_user }}</h2>
+        <hr>
+{% end %}
+
 {% block body %}
-this is body.
+        this is body.
 {% end %}
 </body>
 </html>
