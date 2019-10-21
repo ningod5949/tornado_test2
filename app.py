@@ -17,6 +17,7 @@ class Application(tornado.web.Application):
             (r'/post/(?P<post_id>[0-9]+)', main.PostHandler),
             (r'/signup', account.RegisterHandler),
             (r'/login', account.LoginHandler),
+            (r'/logout', account.LogoutHandler),
             (r'/upload', main.UploadHandler),
         ]
 

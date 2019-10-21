@@ -10,6 +10,7 @@
     </title>
     <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
     <link rel="stylesheet" href="{{ static_url('css/bootstrap.min.css') }}">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -20,7 +21,7 @@
 <body>
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">图片库</a>
+  <a class="navbar-brand" href="/"><i class="fa fa-camera-retro"></i> 图片库</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -35,18 +36,20 @@
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          用户中心
+          <i class="fa fa-cog fa-spin fa-1x fa-fw"></i>用户中心
+                    <span class="sr-only">Loading...</span>
+
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="#">收藏</a>
           <a class="dropdown-item" href="/upload">上传</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="/login">登录</a>
+          <a class="dropdown-item" href="/signup">注册</a>
         </div>
       </li>
         {% if current_user %}
       <li class="nav-item">
-        <a class="nav-link disabled" href="/logout">登出</a>
+        <a class="nav-link " href="/logout">登出</a>
       </li>
         {% end %}
     </ul>
