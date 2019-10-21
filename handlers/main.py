@@ -71,3 +71,14 @@ class UploadHandler(BaseHandler):
                                self.current_user)
 
         self.redirect('/post/{}'.format(post_id))
+
+
+class ProfileHandler(BaseHandler):
+    """
+    用户的档案页面
+    """
+    @tornado.web.authenticated
+    def get(self):
+        user = self.orm.get_user(self.current_user)
+        like_posts = []
+        self.render('profile.html', user=user, like_posts=like_posts)

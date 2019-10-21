@@ -2,6 +2,7 @@ import hashlib
 from models.auth import User, Post
 from models.db import Session
 
+
 db_session = Session()
 def hashed(text):
     """
@@ -10,6 +11,7 @@ def hashed(text):
     :return:
     """
     return hashlib.md5(text.encode('utf8')).hexdigest()
+
 
 def authenticate(username, password):
     """
