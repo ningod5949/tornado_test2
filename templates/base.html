@@ -41,7 +41,7 @@
 
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">收藏</a>
+          <a class="dropdown-item" href="/room">聊天室</a>
           <a class="dropdown-item" href="/profile">用户档案</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/signup">注册</a>
@@ -69,5 +69,8 @@
 <script src="{{ static_url('js/jquery-3.3.1.slim.min.js') }}"></script>
 <script src="{{ static_url('js/popper.min.js') }}"></script>
 <script src="{{ static_url('js/bootstrap.min.js') }}"></script>
+
+{% block script %}
+{% end %}
 </body>
 </html>
