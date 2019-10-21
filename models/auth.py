@@ -49,6 +49,15 @@ class Post(Base):
         return "<User:#{}>".format(self.id)       # 格式化返回
 
 
+class Like(Base):
+    """
+    记录用户标记为喜欢的图片
+    """
+    __tablename__ = 'likes'
+
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, primary_key=True)
+    post_id = Column(Integer, ForeignKey('posts.id'), nullable=False, primary_key=True)
+
 
 
 if __name__ == '__main__':
