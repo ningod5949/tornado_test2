@@ -7,6 +7,9 @@
 
 
 {% block body %}
-    post_id: {{ post.id }} upload by {{ post.user.name }}<br>
+    post_id: {{ post.id }} upload by <a href="{{ '/profile?name={}'.format(post.user.name) }}">
+    {{ post.user.name }}
+    </a>
+    <i class="fa fa-heart text-danger"></i> {{ count }}<br>
     <img src="{{ static_url(post.image_url) }}" alt="">
 {% end %}

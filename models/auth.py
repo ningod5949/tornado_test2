@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import (Column, Integer, String, DateTime, ForeignKey)
+from sqlalchemy import (Column, Integer, String, DateTime, ForeignKey, Boolean)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import exists       # 查询存在
 
@@ -57,7 +57,7 @@ class Like(Base):
 
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False, primary_key=True)
     post_id = Column(Integer, ForeignKey('posts.id'), nullable=False, primary_key=True)
-
+    is_delete = Column(Boolean, default=False)
 
 
 if __name__ == '__main__':

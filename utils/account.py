@@ -1,5 +1,5 @@
 import hashlib
-from models.auth import User, Post
+from models.auth import User, Post, Like
 from models.db import Session
 
 
@@ -78,3 +78,24 @@ class HandlerORM:
         user = self.get_user(username)
         posts = self.db_session.query(Post).filter_by(user=user).all()
         return posts
+
+    def like_posts_for(self, username):
+        """
+        查询用户喜欢的posts
+        :param username:
+        :return:
+        """
+        user = self.get_user(username)
+        posts = self.db_session.query(Post).filter(Post.id == Like.post_id,
+                                                   Like.user_id == user.id,
+                                                   Post.user_id != user.id)
+        return posts
+
+    def count_like_for(self, post_id):
+        """
+        这张图片有哪些用户喜欢
+        :param post_id:
+        :return:
+        """
+        count = self.db_session.query(Like).filter_by(post_id=post_id).count()
+        return count
