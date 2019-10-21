@@ -2,14 +2,23 @@ import tornado.web
 from PIL import Image
 from pycket.session import SessionMixin
 
-from utils.account import add_post, get_all_posts, get_post, get_posts_for
+from utils.account import HandlerORM
 from utils.photo import UploadImage
+from models.db import Session
 
 
 class BaseHandler(tornado.web.RequestHandler, SessionMixin):
     def get_current_user(self):
         return self.session.get('tudo_user', None)
 
+    def prepare(self):
+        self.db_session = Session()
+        print('db_session instance')
+        self.orm = HandlerORM(self.db_session)
+
+    def on_finish(self):
+        self.db_session.close()
+        print('db_session close')
 
 class IndexHandler(BaseHandler):
     """
@@ -17,7 +26,7 @@ class IndexHandler(BaseHandler):
     """
     @tornado.web.authenticated
     def get(self):
-        posts = get_posts_for(self.current_user)
+        posts = self.orm.get_posts_for(self.current_user)
         self.render('index.html', posts=posts)
 
 
@@ -27,7 +36,7 @@ class ExploreHandler(BaseHandler):
     """
     @tornado.web.authenticated
     def get(self):
-        posts = get_all_posts()
+        posts = self.orm.get_all_posts()
         self.render('explore.html', posts=posts)
 
 
@@ -36,12 +45,12 @@ class PostHandler(BaseHandler):
     单个图片详情页面
     """
     def get(self, post_id):
-        post = get_post(post_id)
-        user = post.user
+        post = self.orm.get_post(post_id)
+        print('post return')
         if not post:
             self.write('wrong id {}'.format(post_id))
         else:
-            self.render('post.html', post=post, user=user)
+            self.render('post.html', post=post)
 
 
 class UploadHandler(BaseHandler):
@@ -57,7 +66,7 @@ class UploadHandler(BaseHandler):
             up_img = UploadImage(p['filename'], self.settings['static_path'])
             up_img.save_upload(p['body'])
             up_img.make_thumb()
-            post_id = add_post(up_img.image_url,
+            post_id = self.orm.add_post(up_img.image_url,
                                up_img.thumb_url,
                                self.current_user)
 
