@@ -3,7 +3,7 @@ import tornado.web
 import tornado.options
 from tornado.options import define, options
 
-from handlers import main, account, chat
+from handlers import main, account, chat, service
 
 define('port', default='8000', help='Listening port', type=int)
 define('debug', default='True', help='Debug mode', type=bool)
@@ -24,6 +24,7 @@ class Application(tornado.web.Application):
             (r'/ws/echo', chat.EchWebSocket),           # 聊天
             (r'/ws', chat.ChatHandler),           # 聊天
             (r'/room', chat.RoomHandler),           # 聊天
+            (r'/sync', service.SyncSaveHandler),
         ]
 
         settings = dict(
