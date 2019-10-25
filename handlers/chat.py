@@ -1,10 +1,16 @@
 import uuid
 import datetime
+import logging
 from pycket.session import SessionMixin
 import tornado.websocket
 import tornado.web
 import tornado.escape
+from tornado.httpclient import AsyncHTTPClient
+from tornado.ioloop import IOLoop
+
 from .main import BaseHandler
+
+logger = logging.getLogger('tudo.log')
 
 
 def make_data(handler, msg, username):
@@ -79,9 +85,24 @@ class ChatHandler(tornado.websocket.WebSocketHandler, SessionMixin):
         parsed = tornado.escape.json_decode(message)
         msg = parsed['body']
 
-        chat = make_data(self, msg, self.current_user)
-        self.update_history(chat)
-        self.send_updates(chat)
+        if msg and msg.startswith('http://'):
+            client = AsyncHTTPClient()
+            save_api_url = 'http://127.0.0.1:8000/async?save_url={}'.format(msg)
+            logger.info(save_api_url)
+
+            IOLoop.current().spawn_callback(client.fetch,
+                                            save_api_url,
+                                            request_timeout=30)
+            reply_msg = 'user {}, url {} is processing'.format(
+                self.current_user,
+                msg,
+            )
+            chat = make_data(self, reply_msg, 'system')
+            self.write_message(chat)
+        else:
+            chat = make_data(self, msg, self.current_user)
+            self.update_history(chat)
+            self.send_updates(chat)
 
     def update_history(self, chat):
         """把新的消息更新到history， 截取最后20条"""
