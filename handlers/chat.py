@@ -1,4 +1,5 @@
 import uuid
+import datetime
 from pycket.session import SessionMixin
 import tornado.websocket
 import tornado.web
@@ -6,23 +7,35 @@ import tornado.escape
 from .main import BaseHandler
 
 
+def make_data(handler, msg, username):
+    """生成我们用来发送消息的字典"""
+
+    chat = {
+        'id': str(uuid.uuid4()),
+        'body': msg,
+        'username': username,
+        'created': str(datetime.datetime.now()),
+    }
+    chat['html'] = tornado.escape.to_basestring(handler.render_string('message.html', chat=chat))
+    return chat
+
 class RoomHandler(BaseHandler):
     """
     聊天室页面
     """
     @tornado.web.authenticated
     def get(self):
-        m = {
-            'id': 1213,
-            'username': self.current_user,
-            'body': 'fdsfa',
-        }
-        msgs = [
-            {
-                'html': self.render_string('message.html', chat=m)
-            }
-        ]
-        self.render('room.html', messages=msgs)
+        # m = {
+        #     'id': 1213,
+        #     'username': self.current_user,
+        #     'body': 'fdsfa',
+        # }
+        # msgs = [
+        #     {
+        #         'html': self.render_string('message.html', chat=m)
+        #     }
+        # ]
+        self.render('room.html', messages=ChatHandler.history)
 
 
 
@@ -31,6 +44,8 @@ class ChatHandler(tornado.websocket.WebSocketHandler, SessionMixin):
     处理和响应 Websocket 连接
     """
     waiters = set()   # 等待接收信息的用户
+    history = []        # 存放历史消息
+    history_size = 10 # 最后二十条数据
 
     def get_current_user(self):
         return self.session.get('tudo_user', None)
@@ -63,13 +78,19 @@ class ChatHandler(tornado.websocket.WebSocketHandler, SessionMixin):
         print("got message: {}".format(message))
         parsed = tornado.escape.json_decode(message)
         msg = parsed['body']
-        chat = {
-            'id': str(uuid.uuid4()),
-            'body': msg,
-            'username': self.current_user,
-        }
-        chat['html'] =tornado.escape.to_basestring(self.render_string('message.html', chat=chat))
 
+        chat = make_data(self, msg, self.current_user)
+        self.update_history(chat)
+        self.send_updates(chat)
+
+    def update_history(self, chat):
+        """把新的消息更新到history， 截取最后20条"""
+        ChatHandler.history.append(chat['html'])
+        if len(ChatHandler.history) > ChatHandler.history_size:
+            ChatHandler.history = ChatHandler.history[-ChatHandler.history_size:]
+
+    def send_updates(self, chat):
+        """给每个等待接收的用户发新消息"""
         for w in ChatHandler.waiters:
             w.write_message(chat)
 
