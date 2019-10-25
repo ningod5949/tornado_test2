@@ -1,3 +1,4 @@
+import logging
 import tornado.web
 from PIL import Image
 from pycket.session import SessionMixin
@@ -6,19 +7,19 @@ from utils.account import HandlerORM
 from utils.photo import UploadImage
 from models.db import Session
 
-
+logger = logging.getLogger('tudo.log')
 class BaseHandler(tornado.web.RequestHandler, SessionMixin):
     def get_current_user(self):
         return self.session.get('tudo_user', None)
 
     def prepare(self):
         self.db_session = Session()
-        print('db_session instance')
+        logger.info('db_session instance {}'.format(self))
         self.orm = HandlerORM(self.db_session)
 
     def on_finish(self):
         self.db_session.close()
-        print('db_session close')
+        logger.info('db_session close')
 
 class IndexHandler(BaseHandler):
     """
