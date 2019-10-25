@@ -39,10 +39,17 @@ class AsyncSaveHandler(BaseHandler):
     def get(self):
         username = self.get_argument('name', '')
         save_url = self.get_argument('save_url', '')
+        is_from_room = self.get_argument('is_from', '') == 'room'
         logger.info(save_url)
+        logger.info(is_from_room)
+        logger.info(self.request.remote_ip)
+
+        if not is_from_room:
+            self.write('error')
+            return
 
         client = AsyncHTTPClient()
-        resp = yield client.fetch(save_url)
+        resp = yield client.fetch(save_url, request_timeout=30)
         logger.info(resp.code)
 
         # time.sleep(15)

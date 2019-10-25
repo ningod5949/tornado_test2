@@ -6,7 +6,7 @@
 <div>
         {% if chat['img_url'] %}
         <a href="'/post/{{ chat['post_id'] }}">
-        <img src="{{ static_url(chat['img_url']) }}" alt="">
+        <img src="{{ static_url(chat['img_url']) }}" alt="" class="img-fluid">
         </a>
     </div>
     {% end %}

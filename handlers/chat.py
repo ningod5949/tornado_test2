@@ -4,6 +4,7 @@ import logging
 from pycket.session import SessionMixin
 import tornado.websocket
 import tornado.web
+import tornado.gen
 import tornado.escape
 from tornado.httpclient import AsyncHTTPClient
 from tornado.ioloop import IOLoop
@@ -77,6 +78,8 @@ class ChatHandler(tornado.websocket.WebSocketHandler, SessionMixin):
         print('close ws connection: {}'.format(self))
         ChatHandler.waiters.remove(self)
 
+
+    @tornado.gen.coroutine
     def on_message(self, message):
         """
         Websocket 服务端接收到消息自动调用
@@ -87,21 +90,34 @@ class ChatHandler(tornado.websocket.WebSocketHandler, SessionMixin):
         parsed = tornado.escape.json_decode(message)
         msg = parsed['body']
 
-        if msg and msg.startswith('http://'):
+        if msg and msg.startswith('http'):
+            temp_chat = make_data(self, 'url processing {}'.format(msg))
+            self.write_message(temp_chat)
             client = AsyncHTTPClient()
-            save_api_url = 'http://127.0.0.1:8000/async?save_url={}&name={}'.format(msg, self.current_user)
-            logger.info(save_api_url)
+            resp = yield client.fetch(msg, request_timeout=50)
+            from utils.photo import UploadImage
+            up_img = UploadImage('x.jpg', self.settings['static_path'])
+            up_img.save_upload(resp.body)
+            reply_msg = "upload photo from url {}".format(msg)
+            chat = make_data(self, reply_msg, username=self.current_user, img_url=up_img.image_url)
+            ChatHandler.send_updates(chat)
 
-            IOLoop.current().spawn_callback(client.fetch,
-                                            save_api_url,
-                                            request_timeout=30)
-            reply_msg = 'user {}, url {} is processing'.format(
-                self.current_user,
-                msg,
-            )
-            chat = make_data(self, reply_msg)
-            self.write_message(chat)
+            # save_api_url = 'http://127.0.0.1:8000/async?save_url={}&name={}&is_from=room'.format(msg, self.current_user)
+            # logger.info(save_api_url)
+
+            # IOLoop.current().spawn_callback(client.fetch,
+            #                                 save_api_url,
+            #                                 request_timeout=30)
+            # reply_msg = 'user {}, url {} is processing'.format(
+            #     self.current_user,
+            #     msg,
+            # )
+            # reply_msg = "upload photo from url {}".format(msg)
+            # chat = make_data(self, reply_msg)
+            # ChatHandler.send_updates(chat)
+
         else:
+            logger.warning(locals())
             chat = make_data(self, msg, self.current_user)
             ChatHandler.update_history(chat)
             ChatHandler.send_updates(chat)
