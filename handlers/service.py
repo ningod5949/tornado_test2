@@ -5,6 +5,8 @@ from tornado.httpclient import AsyncHTTPClient
 from tornado.gen import coroutine, sleep
 from handlers.main import BaseHandler
 from utils.photo import UploadImage
+from .chat import ChatHandler, make_data
+
 
 url = 'http://pic1.win4000.com/wallpaper/2018-05-08/5af150aea45bd.jpg'
 urlq = 'http://source.unsplash.com/random'
@@ -35,6 +37,7 @@ class SyncSaveHandler(BaseHandler):
 class AsyncSaveHandler(BaseHandler):
     @coroutine
     def get(self):
+        username = self.get_argument('name', '')
         save_url = self.get_argument('save_url', '')
         logger.info(save_url)
 
@@ -46,14 +49,17 @@ class AsyncSaveHandler(BaseHandler):
         # yield sleep(15)
         # logger.info('sleep end')
         # self.write('get end')
-        # up_img = UploadImage('x.jpg', self.settings['static_path'])
-        # up_img.save_upload(resp.body)
-        # up_img.make_thumb()
-        #
-        # post_id = self.orm.add_post(up_img.image_url,
-        #                             up_img.thumb_url,
-        #                             self.current_user)
-        #
+
+        up_img = UploadImage('x.jpg', self.settings['static_path'])
+        up_img.save_upload(resp.body)
+        up_img.make_thumb()
+
+        post_id = self.orm.add_post(up_img.image_url,
+                                    up_img.thumb_url,
+                                    username)
+
         # self.redirect('/post/{}'.format(post_id))
-
-
+        msg = 'user {} post: http://127.0.0.1:8000/post/{}'.format(username, post_id)
+        chat = make_data(self, msg, img_url=up_img.thumb_url, post_id=post_id)
+        ChatHandler.update_history(chat)
+        ChatHandler.send_updates(chat)

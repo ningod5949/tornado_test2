@@ -13,7 +13,7 @@ from .main import BaseHandler
 logger = logging.getLogger('tudo.log')
 
 
-def make_data(handler, msg, username):
+def make_data(handler, msg, username='system', img_url=None, post_id=None):
     """生成我们用来发送消息的字典"""
 
     chat = {
@@ -21,6 +21,8 @@ def make_data(handler, msg, username):
         'body': msg,
         'username': username,
         'created': str(datetime.datetime.now()),
+        'img_url': img_url,
+        'post_id': post_id,
     }
     chat['html'] = tornado.escape.to_basestring(handler.render_string('message.html', chat=chat))
     return chat
@@ -87,7 +89,7 @@ class ChatHandler(tornado.websocket.WebSocketHandler, SessionMixin):
 
         if msg and msg.startswith('http://'):
             client = AsyncHTTPClient()
-            save_api_url = 'http://127.0.0.1:8000/async?save_url={}'.format(msg)
+            save_api_url = 'http://127.0.0.1:8000/async?save_url={}&name={}'.format(msg, self.current_user)
             logger.info(save_api_url)
 
             IOLoop.current().spawn_callback(client.fetch,
@@ -97,19 +99,21 @@ class ChatHandler(tornado.websocket.WebSocketHandler, SessionMixin):
                 self.current_user,
                 msg,
             )
-            chat = make_data(self, reply_msg, 'system')
+            chat = make_data(self, reply_msg)
             self.write_message(chat)
         else:
             chat = make_data(self, msg, self.current_user)
-            self.update_history(chat)
-            self.send_updates(chat)
+            ChatHandler.update_history(chat)
+            ChatHandler.send_updates(chat)
 
+    @classmethod
     def update_history(self, chat):
         """把新的消息更新到history， 截取最后20条"""
         ChatHandler.history.append(chat['html'])
         if len(ChatHandler.history) > ChatHandler.history_size:
             ChatHandler.history = ChatHandler.history[-ChatHandler.history_size:]
 
+    @classmethod
     def send_updates(self, chat):
         """给每个等待接收的用户发新消息"""
         for w in ChatHandler.waiters:
