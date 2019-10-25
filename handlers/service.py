@@ -49,7 +49,7 @@ class AsyncSaveHandler(BaseHandler):
             return
 
         client = AsyncHTTPClient()
-        resp = yield client.fetch(save_url, request_timeout=30)
+        resp = yield client.fetch(save_url, request_timeout=50)
         logger.info(resp.code)
 
         # time.sleep(15)
