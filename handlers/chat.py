@@ -56,6 +56,9 @@ class ChatHandler(tornado.websocket.WebSocketHandler, SessionMixin):
     history = []        # 存放历史消息
     history_size = 10 # 最后二十条数据
 
+    def check_origin(self, origin: str):
+        return True
+
     def get_current_user(self):
         return self.session.get('tudo_user', None)
 
